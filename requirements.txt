@@ -1,0 +1,7 @@
+# Core dependencies for AI Compiler & Kernel Playground
+fastapi>=0.110.0
+uvicorn>=0.28.0
+numpy>=1.26.0
+torch>=2.0.0
+rich>=13.0.0
+pytest>=8.0.0

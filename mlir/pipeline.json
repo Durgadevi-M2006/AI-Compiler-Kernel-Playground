@@ -1,0 +1,145 @@
+{
+  "pipelines": {
+    "vector_add": {
+      "title": "Vector Addition (c = a + b)",
+      "description": "Step-by-step dialect lowering from high-level tensor math down to machine assembly.",
+      "stages": [
+        {
+          "stage_id": "high_level",
+          "dialect": "High-Level Language (Python / Mojo)",
+          "title": "1. Source Code Intent",
+          "description": "Expresses element-wise vector addition at the source code level.",
+          "code": "# Python Baseline\nfor i in range(N):\n    c[i] = a[i] + b[i]\n\n# Mojo SIMD Kernel\nvectorize[compute_simd, simd_width](N)",
+          "key_concepts": [
+            "Pure algorithm description",
+            "High-level abstraction without hardware binding"
+          ]
+        },
+        {
+          "stage_id": "linalg",
+          "dialect": "linalg (Linear Algebra)",
+          "title": "2. High-Level Tensor Representation",
+          "description": "Abstract multidimensional operations with affine index maps and iteration space decorators.",
+          "code": "func.func @vec_add(%arg0: memref<1024xf32>, %arg1: memref<1024xf32>, %arg2: memref<1024xf32>) {\n  linalg.generic {\n    indexing_maps = [\n      affine_map<(d0) -> (d0)>,\n      affine_map<(d0) -> (d0)>,\n      affine_map<(d0) -> (d0)>\n    ],\n    iterator_types = [\"parallel\"]\n  } ins(%arg0, %arg1 : memref<1024xf32>, memref<1024xf32>)\n    outs(%arg2 : memref<1024xf32>) {\n  ^bb0(%in1: f32, %in2: f32, %out: f32):\n    %sum = arith.addf %in1, %in2 : f32\n    linalg.yield %sum : f32\n  }\n  return\n}",
+          "key_concepts": [
+            "iterator_types = [\"parallel\"] flags that all elements are independent",
+            "No loop order hardcoded yet"
+          ]
+        },
+        {
+          "stage_id": "scf",
+          "dialect": "scf (Structured Control Flow)",
+          "title": "3. Loop Generation (Lowering Pass)",
+          "description": "Pass: --convert-linalg-to-loops. Replaces tensor abstract operations with explicit loop bounds.",
+          "code": "func.func @vec_add_scf(%arg0: memref<1024xf32>, %arg1: memref<1024xf32>, %arg2: memref<1024xf32>) {\n  %c0 = arith.constant 0 : index\n  %c1024 = arith.constant 1024 : index\n  %c1 = arith.constant 1 : index\n\n  scf.for %i = %c0 to %c1024 step %c1 {\n    %val_a = memref.load %arg0[%i] : memref<1024xf32>\n    %val_b = memref.load %arg1[%i] : memref<1024xf32>\n    %sum = arith.addf %val_a, %val_b : f32\n    memref.store %sum, %arg2[%i] : memref<1024xf32>\n  }\n  return\n}",
+          "key_concepts": [
+            "Linear index calculation",
+            "Generates scalar memory loads and stores"
+          ]
+        },
+        {
+          "stage_id": "vector",
+          "dialect": "vector (Hardware SIMD)",
+          "title": "4. SIMD Vectorization Pass",
+          "description": "Pass: --affine-vectorize=\"virtual-vector-size=8\". Packs 8 floats into a single 256-bit AVX register.",
+          "code": "func.func @vec_add_vector(%arg0: memref<1024xf32>, %arg1: memref<1024xf32>, %arg2: memref<1024xf32>) {\n  %c0 = arith.constant 0 : index\n  %c1024 = arith.constant 1024 : index\n  %c8 = arith.constant 8 : index\n  %c0_f32 = arith.constant 0.0 : f32\n\n  scf.for %i = %c0 to %c1024 step %c8 {\n    %vec_a = vector.transfer_read %arg0[%i], %c0_f32 : memref<1024xf32>, vector<8xf32>\n    %vec_b = vector.transfer_read %arg1[%i], %c0_f32 : memref<1024xf32>, vector<8xf32>\n    %vec_sum = arith.addf %vec_a, %vec_b : vector<8xf32>\n    vector.transfer_write %vec_sum, %arg2[%i] : vector<8xf32>, memref<1024xf32>\n  }\n  return\n}",
+          "key_concepts": [
+            "Step increases from 1 to 8",
+            "8x fewer loop iterations",
+            "Maps directly to CPU SIMD execution units"
+          ]
+        },
+        {
+          "stage_id": "llvm",
+          "dialect": "llvm (Low-Level Machine IR)",
+          "title": "5. LLVM IR Lowering",
+          "description": "Pass: --convert-vector-to-llvm --convert-func-to-llvm. Transforms into pointer offsets and LLVM vector instructions.",
+          "code": "llvm.func @vec_add_llvm(%ptr_a: !llvm.ptr, %ptr_b: !llvm.ptr, %ptr_c: !llvm.ptr) {\n  %vec_a = llvm.load %ptr_a : !llvm.ptr -> vector<8xf32>\n  %vec_b = llvm.load %ptr_b : !llvm.ptr -> vector<8xf32>\n  %sum = llvm.fadd %vec_a, %vec_b : vector<8xf32>\n  llvm.store %sum, %ptr_c : vector<8xf32>, !llvm.ptr\n  llvm.return\n}",
+          "key_concepts": [
+            "Hardware pointer semantics",
+            "Zero high-level dialect overhead"
+          ]
+        },
+        {
+          "stage_id": "assembly",
+          "dialect": "x86-64 Assembly (AVX2)",
+          "title": "6. Machine Code Execution",
+          "description": "Final binary emitted by LLVM backend targeting CPU execution units.",
+          "code": ".LBB0_1:\n    vmovups (%rsi,%rax,4), %ymm0      # Load 8 floats from Array A\n    vaddps  (%rdx,%rax,4), %ymm0, %ymm0 # SIMD Add 8 floats with Array B\n    vmovups %ymm0, (%rdi,%rax,4)      # Store 8 floats to Array C\n    addq    $8, %rax                  # Increment index by 8\n    cmpq    $1024, %rax               # Loop condition check\n    jl      .LBB0_1",
+          "key_concepts": [
+            "vmovups and vaddps: 256-bit AVX SIMD instructions",
+            "8 additions completed in single clock cycle latency"
+          ]
+        }
+      ]
+    },
+    "matmul": {
+      "title": "Matrix Multiplication (GEMM)",
+      "description": "Transforming O(N^3) memory-choked loops into cache-blocked, vectorized FMA micro-kernels.",
+      "stages": [
+        {
+          "stage_id": "linalg_matmul",
+          "dialect": "linalg",
+          "title": "1. Named linalg.matmul Op",
+          "description": "High-level declarative matrix multiplication on tensor types.",
+          "code": "func.func @matmul(%A: tensor<512x512xf32>, %B: tensor<512x512xf32>, %C: tensor<512x512xf32>) -> tensor<512x512xf32> {\n  %res = linalg.matmul\n    ins(%A, %B : tensor<512x512xf32>, tensor<512x512xf32>)\n    outs(%C : tensor<512x512xf32>) -> tensor<512x512xf32>\n  return %res : tensor<512x512xf32>\n}",
+          "key_concepts": [
+            "Clean declarative representation",
+            "Compiler recognizes standard GEMM pattern for targeted optimization"
+          ]
+        },
+        {
+          "stage_id": "tiling",
+          "dialect": "scf / affine (Tiled Loops)",
+          "title": "2. Cache-Aware Loop Tiling",
+          "description": "Pass: --linalg-tile=\"tile-sizes=64,64,64\". Slices 512x512 matrices into 64x64 blocks that fit into CPU L1/L2 cache.",
+          "code": "scf.for %i_tile = %c0 to %c512 step %c64 {\n  scf.for %j_tile = %c0 to %c512 step %c64 {\n    scf.for %k_tile = %c0 to %c512 step %c64 {\n      // Subviews allocated inside L1/L2 fast cache\n      %sub_a = memref.subview %A[%i_tile, %k_tile] [64, 64]\n      %sub_b = memref.subview %B[%k_tile, %j_tile] [64, 64]\n      %sub_c = memref.subview %C[%i_tile, %j_tile] [64, 64]\n      linalg.matmul ins(%sub_a, %sub_b) outs(%sub_c)\n    }\n  }\n}",
+          "key_concepts": [
+            "Prevents cache thrashing",
+            "Increases data reuse ratio by ~8x-15x"
+          ]
+        },
+        {
+          "stage_id": "vector_contract",
+          "dialect": "vector (FMA Micro-Kernel)",
+          "title": "3. Vector FMA & Register Packing",
+          "description": "Pass: --convert-linalg-to-vector. Emits vector.contract / vector.fma across 8x8 register accumulator tiles.",
+          "code": "%c_tile = vector.transfer_read %C_sub[%i, %j] : vector<8x8xf32>\n%res_tile = scf.for %k = %c0 to %c64 step %c8 iter_args(%acc = %c_tile) {\n  %a_tile = vector.transfer_read %A_sub[%i, %k] : vector<8x8xf32>\n  %b_tile = vector.transfer_read %B_sub[%k, %j] : vector<8x8xf32>\n  %fma = vector.contract {\n    indexing_maps = [affine_map<(i,j,k)->(i,k)>, affine_map<(i,j,k)->(k,j)>, affine_map<(i,j,k)->(i,j)>],\n    iterator_types = [\"parallel\", \"parallel\", \"reduction\"]\n  } %a_tile, %b_tile, %acc : vector<8x8xf32>, vector<8x8xf32> into vector<8x8xf32>\n  scf.yield %fma : vector<8x8xf32>\n}",
+          "key_concepts": [
+            "Utilizes CPU FMA (Fused Multiply-Add) units",
+            "Keeps working tiles in 16-32 vector registers (ymm / zmm)"
+          ]
+        }
+      ]
+    },
+    "operator_fusion": {
+      "title": "Operator Fusion (Linear + Activation)",
+      "description": "Fusing compute passes to eliminate DRAM memory traffic.",
+      "stages": [
+        {
+          "stage_id": "unfused",
+          "dialect": "Unfused MLIR",
+          "title": "1. Unfused Pipeline (High Memory Traffic)",
+          "description": "Two separate kernels connected by an intermediate DRAM buffer.",
+          "code": "// Kernel 1: MatMul\n%Z = memref.alloc() : memref<128x512xf32> # Allocates 256 KB DRAM\nlinalg.matmul ins(%A, %B) outs(%Z)\n\n// Kernel 2: ReLU\nlinalg.generic ins(%Z) outs(%Out) {\n^bb0(%z: f32, %out: f32):\n  %relu = arith.select (%z > 0.0), %z, 0.0\n  linalg.yield %relu\n}\nmemref.dealloc %Z",
+          "key_concepts": [
+            "2 full memory writes + 1 full memory read",
+            "Slowed down by memory bus bandwidth"
+          ]
+        },
+        {
+          "stage_id": "fused",
+          "dialect": "Fused MLIR",
+          "title": "2. Fused Kernel (Pass: --linalg-fuse-elementwise-ops)",
+          "description": "Combines GEMM accumulation and ReLU directly inside CPU registers before writing to output.",
+          "code": "linalg.generic {\n  iterator_types = [\"parallel\", \"parallel\", \"reduction\"]\n} ins(%A, %B) outs(%Out) {\n^bb0(%a: f32, %b: f32, %out: f32):\n  %prod = arith.mulf %a, %b : f32\n  %sum = arith.addf %prod, %out : f32\n  # Inline activation without intermediate DRAM store\n  %relu = arith.select (%sum > 0.0), %sum, 0.0\n  linalg.yield %relu : f32\n}",
+          "key_concepts": [
+            "Zero intermediate buffer allocation",
+            "Cuts memory traffic in half",
+            "Increases arithmetic intensity (FLOPs / Byte)"
+          ]
+        }
+      ]
+    }
+  }
+}

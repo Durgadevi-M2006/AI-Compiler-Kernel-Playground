@@ -1,0 +1,1238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Compiler & Kernel Playground | Explore • Analyze • Optimize</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;500;600;700;800&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  
+  <div class="app-wrapper">
+    
+    <!-- ========================================================================
+         LEFT SIDEBAR NAVIGATION
+         ======================================================================== -->
+    <aside class="sidebar" id="app-sidebar">
+      <div class="sidebar-header">
+        <a href="#dashboard" class="brand-link" id="brand-home-link">
+          <div class="brand-icon-box">⚡</div>
+          <div class="brand-info">
+            <span class="brand-title">AI Compiler Playground</span>
+            <span class="brand-subtitle">Explore • Analyze • Optimize</span>
+          </div>
+        </a>
+        <button class="btn-sidebar-toggle" id="btn-toggle-sidebar" title="Collapse Sidebar" aria-label="Toggle Sidebar">
+          <span>◀</span>
+        </button>
+      </div>
+
+      <nav class="sidebar-nav">
+        <a class="nav-item active" data-view="dashboard" id="nav-dashboard">
+          <span class="nav-icon">⌂</span>
+          <span class="nav-label">Dashboard</span>
+        </a>
+        <a class="nav-item" data-view="playground" id="nav-playground">
+          <span class="nav-icon">▣</span>
+          <span class="nav-label">Playground</span>
+        </a>
+        <a class="nav-item" data-view="analyze" id="nav-analyze">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-label">Analyze & Optimize</span>
+        </a>
+        <a class="nav-item" data-view="graph" id="nav-graph">
+          <span class="nav-icon">📈</span>
+          <span class="nav-label">Before / After Graph</span>
+        </a>
+        <a class="nav-item" data-view="mlir" id="nav-mlir">
+          <span class="nav-icon">◇</span>
+          <span class="nav-label">MLIR Explorer</span>
+        </a>
+        <a class="nav-item" data-view="max-graph" id="nav-max">
+          <span class="nav-icon">◈</span>
+          <span class="nav-label">MAX Graph</span>
+        </a>
+        <a class="nav-item" data-view="benchmark" id="nav-benchmark">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Benchmark</span>
+        </a>
+        <a class="nav-item" data-view="concepts" id="nav-concepts">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">Concepts</span>
+        </a>
+        <a class="nav-item" data-view="history" id="nav-history">
+          <span class="nav-icon">🕘</span>
+          <span class="nav-label">History</span>
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="system-status-box" id="sidebar-status-box">
+          <span class="status-dot-pulse" id="status-pulse-dot"></span>
+          <span class="system-status-text" id="status-pulse-text">Backend Connected</span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ========================================================================
+         MAIN CONTENT AREA
+         ======================================================================== -->
+    <div class="main-wrapper">
+      
+      <!-- Top Header Bar -->
+      <header class="top-header">
+        <div class="header-left">
+          <button class="btn-mobile-menu" id="btn-mobile-menu" aria-label="Open Navigation">☰</button>
+          <div class="page-breadcrumb">
+            <span class="crumb-parent">AI Compiler Playground</span>
+            <span class="crumb-sep">/</span>
+            <span class="crumb-current" id="header-crumb-title">Dashboard</span>
+          </div>
+        </div>
+        <div class="header-right">
+          <div class="header-pill" id="header-runtime-pill">
+            <span class="badge badge-green" id="header-runtime-badge">● Ready</span>
+            <span id="header-runtime-desc" style="font-size: 11.5px; color: var(--text-muted);">Python 3.12 / SIMD Enabled</span>
+          </div>
+          <button class="btn-help" id="btn-open-help">
+            <span>💡</span> <span>Need Help?</span>
+          </button>
+        </div>
+      </header>
+
+      <!-- Scrollable Content Body -->
+      <main class="content-body">
+
+        <!-- ====================================================================
+             VIEW 1: DASHBOARD HOME
+             ==================================================================== -->
+        <section class="view-section active" id="view-dashboard">
+          
+          <!-- Hero Banner -->
+          <div class="hero-banner">
+            <span class="hero-tag">AI COMPILER & KERNEL PLAYGROUND</span>
+            <h2 class="hero-title">High-Performance Compiler & Kernel Studio</h2>
+            <p class="hero-desc">
+              Write code, understand computation patterns, explore compiler intermediate representations (MLIR), visualize graph operator fusion (MAX), and compare verified performance.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-lg" id="btn-dash-start-playground">
+                <span>Start Playground</span> <span>→</span>
+              </button>
+              <button class="btn btn-outline btn-lg" id="btn-dash-explore-example">
+                <span>⚡ Explore Example</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- 5-Step Visual Interactive Workflow Card -->
+          <div class="workflow-section">
+            <h3 class="section-title">How AI Compilation & Optimization Works</h3>
+            <p class="section-subtitle">Click any stage to jump directly into the interactive step with your active program.</p>
+
+            <div class="workflow-steps-grid">
+              
+              <div class="workflow-step-card" data-step-target="playground" id="wf-step-1">
+                <div class="step-header">
+                  <span class="step-number">① STEP 1</span>
+                  <span class="step-icon">💻</span>
+                </div>
+                <h4 class="step-name">Write Code</h4>
+                <p class="step-desc">Enter Python or Mojo kernel code, or select beginner-friendly starter workloads.</p>
+                <span class="step-action-hint">Open Editor →</span>
+              </div>
+
+              <div class="workflow-step-card" data-step-target="analyze" id="wf-step-2">
+                <div class="step-header">
+                  <span class="step-number">② STEP 2</span>
+                  <span class="step-icon">🔍</span>
+                </div>
+                <h4 class="step-name">Analyze</h4>
+                <p class="step-desc">Inspect loop structures, memory access patterns, and detect optimization opportunities.</p>
+                <span class="step-action-hint">Run Analysis →</span>
+              </div>
+
+              <div class="workflow-step-card" data-step-target="analyze" id="wf-step-3">
+                <div class="step-header">
+                  <span class="step-number">③ STEP 3</span>
+                  <span class="step-icon">⚡</span>
+                </div>
+                <h4 class="step-name">Optimize</h4>
+                <p class="step-desc">Apply SIMD vectorization, cache tiling, multi-core parallelization, or loop reordering.</p>
+                <span class="step-action-hint">View Transformations →</span>
+              </div>
+
+              <div class="workflow-step-card" data-step-target="graph" id="wf-step-4">
+                <div class="step-header">
+                  <span class="step-number">④ STEP 4</span>
+                  <span class="step-icon">📈</span>
+                </div>
+                <h4 class="step-name">Visualize</h4>
+                <p class="step-desc">See the interactive computation graph before and after kernel optimization.</p>
+                <span class="step-action-hint">Explore Graph →</span>
+              </div>
+
+              <div class="workflow-step-card" data-step-target="benchmark" id="wf-step-5">
+                <div class="step-header">
+                  <span class="step-number">⑤ STEP 5</span>
+                  <span class="step-icon">📊</span>
+                </div>
+                <h4 class="step-name">Benchmark</h4>
+                <p class="step-desc">Measure execution speedups, memory bandwidth reduction, and throughput gains.</p>
+                <span class="step-action-hint">Compare Metrics →</span>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- 2-Column Dashboard Grid: Predefined Workloads & Technology Matrix -->
+          <div class="dash-grid-2col">
+            
+            <!-- Predefined AI Workloads Showcase -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <h3 class="card-title">Predefined AI Workloads</h3>
+                  <span class="card-subtitle">5 Core AI and Compiler Engineering Benchmarks</span>
+                </div>
+                <span class="badge badge-blue">Ready to Run</span>
+              </div>
+
+              <div class="workload-list">
+                <div class="workload-item" data-load-exp="vector_add">
+                  <div class="workload-item-info">
+                    <span class="workload-item-name">1. Vector Addition (c = a + b)</span>
+                    <span class="workload-item-meta">Memory-bound • SIMD AVX2 • Multi-core Parallel</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline-blue">Load in Playground</button>
+                </div>
+
+                <div class="workload-item" data-load-exp="matrix_multiply">
+                  <div class="workload-item-info">
+                    <span class="workload-item-name">2. Matrix Multiplication (GEMM)</span>
+                    <span class="workload-item-meta">Compute-bound • O(N³) Loop Reordering • 2D Cache Tiling</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline-blue">Load in Playground</button>
+                </div>
+
+                <div class="workload-item" data-load-exp="elementwise_relu">
+                  <div class="workload-item-info">
+                    <span class="workload-item-name">3. Element-wise Activations (ReLU/GELU)</span>
+                    <span class="workload-item-meta">Pointwise Branching • SIMD Vectorization • Register Compute</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline-blue">Load in Playground</button>
+                </div>
+
+                <div class="workload-item" data-load-exp="reduction_sum">
+                  <div class="workload-item-info">
+                    <span class="workload-item-name">4. Reductions (Sum / Max)</span>
+                    <span class="workload-item-meta">Loop-Carried Dependency • Vector Tree Accumulation</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline-blue">Load in Playground</button>
+                </div>
+
+                <div class="workload-item" data-load-exp="ml_workload">
+                  <div class="workload-item-info">
+                    <span class="workload-item-name">5. 2-Layer MLP Neural Network Forward Pass</span>
+                    <span class="workload-item-meta">End-to-End Inference • MAX Operator Fusion (Linear+Bias+ReLU)</span>
+                  </div>
+                  <button class="btn btn-sm btn-outline-blue">Load in Playground</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Technology Execution Matrix -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <h3 class="card-title">Technology Representation Matrix</h3>
+                  <span class="card-subtitle">How different layers interact in the compiler stack</span>
+                </div>
+              </div>
+
+              <table class="tech-matrix-table">
+                <thead>
+                  <tr>
+                    <th>Technology</th>
+                    <th>Role in Stack</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td><strong style="color: var(--text-primary);">Python 3.12</strong></td>
+                    <td>High-level baseline reference algorithm</td>
+                    <td><span class="badge badge-green">Native Live</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--accent-cyan);">NumPy / BLAS</strong></td>
+                    <td>C-extension vectorized BLAS wrapper</td>
+                    <td><span class="badge badge-green">Hardware Live</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--accent-purple);">MLIR</strong></td>
+                    <td>Hierarchical compiler dialect lowering</td>
+                    <td><span class="badge badge-purple">Pipeline Ready</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--accent-amber);">Mojo Kernels</strong></td>
+                    <td>Direct SIMD registers & multi-core loops</td>
+                    <td><span class="badge badge-cyan" id="matrix-mojo-status">AST Simulator</span></td>
+                  </tr>
+                  <tr>
+                    <td><strong style="color: var(--accent-green);">MAX Engine</strong></td>
+                    <td>Global computation graph & kernel fusion</td>
+                    <td><span class="badge badge-green">Graph Ready</span></td>
+                  </tr>
+                </tbody>
+              </table>
+
+              <div class="honest-notice-banner" style="margin-top: 14px;">
+                <span class="honest-icon">💡</span>
+                <span>All benchmarks are verified for numerical correctness against reference algorithms.</span>
+              </div>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 2: PLAYGROUND (MAIN CODING STUDIO)
+             ==================================================================== -->
+        <section class="view-section" id="view-playground">
+          
+          <!-- Top Controls Bar -->
+          <div class="playground-controls-bar">
+            <div class="controls-bar-left">
+              
+              <!-- Language Selector -->
+              <div class="control-item">
+                <label for="playground-lang-select" class="control-label">Language:</label>
+                <select id="playground-lang-select" class="form-select">
+                  <option value="python">Python 3.12</option>
+                  <option value="mojo">Mojo</option>
+                </select>
+              </div>
+
+              <!-- Example Dropdown -->
+              <div class="control-item">
+                <label for="playground-example-select" class="control-label">Example:</label>
+                <select id="playground-example-select" class="form-select">
+                  <option value="vec_add">Vector Addition</option>
+                  <option value="matmul">Matrix Multiplication</option>
+                  <option value="relu">Element-wise Operation</option>
+                  <option value="reduction">Reduction</option>
+                  <option value="ml_workload">ML Workload</option>
+                  <option value="custom">Blank / Custom Code</option>
+                </select>
+              </div>
+
+              <div class="example-desc-pill" id="playground-example-desc">
+                Adds two arrays element by element.
+              </div>
+
+            </div>
+
+            <div class="controls-bar-right">
+              <button class="btn btn-outline btn-sm" id="btn-reset-code" title="Reset to original template">
+                <span>↺</span> <span>Reset</span>
+              </button>
+              <button class="btn btn-primary" id="btn-run-code" title="Execute code safely (Ctrl+Enter)">
+                <span>▶</span> <span>Run Code</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Active Program Status Banner in Playground -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px 16px; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: 14px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge badge-blue">ACTIVE PROGRAM</span>
+              <strong id="playground-active-title" style="color: var(--text-primary);">Vector Addition</strong>
+              <span class="badge badge-muted" id="playground-active-lang">PYTHON</span>
+              <span class="badge badge-green" id="playground-active-status">Analyzed ✓</span>
+            </div>
+            <div style="font-size: 12px; color: var(--text-secondary);" id="playground-detected-ops-pill">
+              Detected: <span style="color: var(--accent-cyan);">Input ➔ Loop ➔ Add ➔ Output</span>
+            </div>
+          </div>
+
+          <!-- Code Editor & Console Split Grid -->
+          <div class="editor-grid-2col">
+            
+            <!-- Code Editor Box -->
+            <div class="editor-container">
+              <div class="editor-header">
+                <span id="editor-active-filename">vector_add.py</span>
+                <span class="badge badge-muted" id="editor-lang-badge">PYTHON</span>
+              </div>
+
+              <div class="editor-wrapper">
+                <div class="line-numbers" id="editor-line-numbers">1</div>
+                <textarea id="playground-code-textarea" class="code-textarea" spellcheck="false" placeholder="Write or edit Python or Mojo kernel code here..."></textarea>
+              </div>
+
+              <!-- Editor Action Bar -->
+              <div class="editor-action-bar">
+                <div class="editor-actions-left">
+                  <button class="btn btn-outline-blue" id="btn-action-analyze" title="Inspect loop patterns and opportunities">
+                    <span>🔍</span> <span>Analyze Code</span>
+                  </button>
+                  <button class="btn btn-amber" id="btn-action-optimize" title="Generate safe transformed code">
+                    <span>⚡</span> <span>Optimize Code</span>
+                  </button>
+                  <button class="btn btn-purple" id="btn-action-compare" title="Run both versions and measure speedup">
+                    <span>📊</span> <span>Compare Performance</span>
+                  </button>
+                </div>
+                <div class="editor-actions-right">
+                  <button class="btn btn-outline btn-sm" id="btn-action-view-graph" title="View computation graph">
+                    <span>📈 Graph</span>
+                  </button>
+                  <button class="btn btn-outline btn-sm" id="btn-action-view-mlir" title="View MLIR representation">
+                    <span>◇ MLIR</span>
+                  </button>
+                </div>
+              </div>
+
+              <div class="editor-footer-status">
+                <span>🔒 Sandboxed Execution • 5s Guard Limit</span>
+                <span id="editor-char-stats">Lines: 1 | Chars: 0</span>
+              </div>
+            </div>
+
+            <!-- Execution Console & Diagnostics -->
+            <div class="console-panel">
+              <div class="console-header">
+                <span style="font-size: 12.5px; font-weight: 600; color: var(--text-primary);">Execution Output</span>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span class="badge badge-muted" id="console-status-badge">Ready</span>
+                  <button class="btn btn-sm btn-outline" id="btn-copy-console-output">Copy</button>
+                </div>
+              </div>
+
+              <!-- Console Metrics Row -->
+              <div class="console-metrics-row">
+                <div class="console-metric-item">
+                  <span class="metric-name">Execution Time</span>
+                  <span class="metric-value text-cyan" id="console-time-val">-- ms</span>
+                </div>
+                <div class="console-metric-item">
+                  <span class="metric-name">Status</span>
+                  <span class="metric-value" id="console-state-val">IDLE</span>
+                </div>
+                <div class="console-metric-item">
+                  <span class="metric-name">Runtime Environment</span>
+                  <span class="metric-value text-muted" id="console-env-val">Python 3.12</span>
+                </div>
+              </div>
+
+              <!-- Terminal Body -->
+              <pre class="terminal-body" id="console-terminal-body">Press "Run Code" or "Analyze Code" to execute your script...</pre>
+
+              <!-- Friendly Error Details Drawer -->
+              <div class="error-card-box" id="console-error-box" style="display: none;">
+                <div class="error-card-header">
+                  <span class="error-title">
+                    <span>⚠️</span> <span id="console-error-title">Error Detected</span>
+                  </span>
+                  <button class="btn-toggle-error-details" id="btn-toggle-error-details">View Details ▼</button>
+                </div>
+                <p class="error-summary-text" id="console-error-summary">An error occurred during execution.</p>
+                <pre class="error-traceback-pre" id="console-error-traceback" style="display: none;"></pre>
+              </div>
+
+            </div>
+
+          </div>
+
+          <!-- Expandable Analysis Summary Drawer (Appears below editor) -->
+          <div class="expandable-panel" id="playground-analysis-drawer" style="display: none;">
+            <div class="expandable-header" id="header-toggle-analysis">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge badge-amber">ANALYSIS RESULT</span>
+                <strong style="font-size: 13.5px; color: var(--text-primary);" id="playground-analysis-summary-title">✓ Code parsed successfully • ⚡ Optimization opportunities detected</strong>
+              </div>
+              <span class="btn btn-sm btn-outline">Toggle Details ▼</span>
+            </div>
+            <div class="expandable-content" id="content-analysis-drawer">
+              <div class="checklist-grid" id="playground-checklist-container">
+                <!-- Checklist populated via JS -->
+              </div>
+              <div class="opportunities-list" id="playground-opportunities-container" style="margin-top: 14px;">
+                <!-- Opportunities populated via JS -->
+              </div>
+            </div>
+          </div>
+
+          <!-- Expandable Side-by-Side Code Diff Drawer -->
+          <div class="expandable-panel" id="playground-diff-drawer" style="display: none;">
+            <div class="expandable-header" id="header-toggle-diff">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge badge-green">OPTIMIZED KERNEL</span>
+                <strong style="font-size: 13.5px; color: var(--text-primary);">Side-by-Side Transformation: Original vs. Optimized</strong>
+              </div>
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <button class="btn btn-sm btn-purple" id="btn-run-side-comparison">Compare Performance</button>
+              </div>
+            </div>
+            <div class="expandable-content" id="content-diff-drawer">
+              <div class="diff-viewer-grid">
+                <div class="diff-col">
+                  <div class="diff-col-header">
+                    <span>Original Implementation</span>
+                    <span class="badge badge-muted">Before</span>
+                  </div>
+                  <pre class="diff-code-pre" id="diff-pre-original"></pre>
+                </div>
+                <div class="diff-col">
+                  <div class="diff-col-header">
+                    <span>⚡ Optimized Implementation</span>
+                    <span class="badge badge-green">After</span>
+                  </div>
+                  <pre class="diff-code-pre" id="diff-pre-optimized"></pre>
+                </div>
+              </div>
+              <div style="margin-top: 12px; padding: 10px 14px; background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle);">
+                <strong style="font-size: 12px; color: var(--text-primary);">Changes Applied:</strong>
+                <ul id="diff-changes-list" style="margin-left: 18px; margin-top: 4px; font-size: 12px; color: var(--text-secondary);"></ul>
+              </div>
+            </div>
+          </div>
+
+          <!-- Expandable Performance Comparison Drawer -->
+          <div class="expandable-panel" id="playground-compare-drawer" style="display: none;">
+            <div class="expandable-header" id="header-toggle-compare">
+              <div style="display: flex; align-items: center; gap: 10px;">
+                <span class="badge badge-cyan">PERFORMANCE COMPARISON</span>
+                <strong style="font-size: 13.5px; color: var(--text-primary);" id="playground-compare-summary-title">Measured Speedup & Latency Comparison</strong>
+              </div>
+            </div>
+            <div class="expandable-content" id="content-compare-drawer">
+              <div class="kpi-metrics-grid">
+                <div class="kpi-box">
+                  <span class="kpi-title">Original Time</span>
+                  <span class="kpi-number text-muted" id="comp-kpi-orig-time">-- ms</span>
+                  <span class="kpi-sub">Baseline Run</span>
+                </div>
+                <div class="kpi-box">
+                  <span class="kpi-title">Optimized Time</span>
+                  <span class="kpi-number text-cyan" id="comp-kpi-opt-time">-- ms</span>
+                  <span class="kpi-sub">Transformed Kernel</span>
+                </div>
+                <div class="kpi-box">
+                  <span class="kpi-title">Measured Speedup</span>
+                  <span class="kpi-number text-emerald" id="comp-kpi-speedup" style="color: var(--accent-green);">--x</span>
+                  <span class="kpi-sub">Throughput Improvement</span>
+                </div>
+                <div class="kpi-box">
+                  <span class="kpi-title">Latency Reduction</span>
+                  <span class="kpi-number text-amber" id="comp-kpi-reduction" style="color: var(--accent-amber);">-- %</span>
+                  <span class="kpi-sub">Time Saved</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 3: ANALYZE & OPTIMIZE
+             ==================================================================== -->
+        <section class="view-section" id="view-analyze">
+          
+          <!-- Active Program Status Banner -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge badge-blue">ACTIVE PROGRAM</span>
+              <strong id="analyze-active-title" style="color: var(--text-primary);">Vector Addition</strong>
+              <span class="badge badge-muted" id="analyze-active-lang">PYTHON</span>
+              <span class="badge badge-green" id="analyze-active-status">Analyzed ✓</span>
+            </div>
+            <button class="btn btn-sm btn-outline-blue" onclick="window.navigateToView('playground')">Change Code in Playground</button>
+          </div>
+
+          <div class="card" style="margin-bottom: 20px;">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title">Code Analysis & Optimization Opportunities</h3>
+                <span class="card-subtitle">Automated static inspection of computational loops, memory access, and vectorization</span>
+              </div>
+              <button class="btn btn-primary" id="btn-reanalyze-code">
+                <span>🔍 Re-Analyze Active Program</span>
+              </button>
+            </div>
+
+            <!-- 5-Item Analysis Checklist -->
+            <div class="checklist-grid" id="main-checklist-grid">
+              <div class="checklist-item">
+                <span class="checklist-icon">✓</span>
+                <span>Syntax & AST Valid</span>
+              </div>
+              <div class="checklist-item">
+                <span class="checklist-icon">✓</span>
+                <span>Loop Structure Inspected</span>
+              </div>
+              <div class="checklist-item">
+                <span class="checklist-icon">✓</span>
+                <span>Memory Access Patterns</span>
+              </div>
+              <div class="checklist-item">
+                <span class="checklist-icon">✓</span>
+                <span>Parallelization Evaluated</span>
+              </div>
+              <div class="checklist-item">
+                <span class="checklist-icon">✓</span>
+                <span>Vectorization (SIMD)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Optimization Opportunities List -->
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title">Actionable Optimization Advice</h3>
+                <span class="card-subtitle">Identified architectural improvements for this computational workload</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <span class="badge status-pill-detected">Detected</span>
+                <span class="badge status-pill-suggested">Suggested</span>
+                <span class="badge status-pill-applied">Applied</span>
+              </div>
+            </div>
+
+            <div class="opportunities-list" id="main-opportunities-container">
+              <!-- Populated dynamically via JS -->
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 4: BEFORE / AFTER COMPUTATION GRAPH
+             ==================================================================== -->
+        <section class="view-section" id="view-graph">
+          
+          <!-- Active Program Status Banner -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge badge-blue">ACTIVE PROGRAM</span>
+              <strong id="graph-active-title" style="color: var(--text-primary);">Vector Addition</strong>
+              <span class="badge badge-muted" id="graph-active-lang">PYTHON</span>
+              <span class="badge badge-green" id="graph-active-status">Analyzed ✓</span>
+            </div>
+            <button class="btn btn-sm btn-outline-blue" onclick="window.navigateToView('playground')">Switch / Edit Code in Playground</button>
+          </div>
+
+          <!-- Empty State (Shown if no analyzed program exists) -->
+          <div class="empty-state-box" id="graph-empty-state" style="display: none;">
+            <div class="empty-state-icon">📈</div>
+            <h4 class="empty-state-title">No Analyzed Program</h4>
+            <p class="empty-state-text">Select an example or write custom code in the Playground and click "Analyze Code" to generate its Before & After computation graph.</p>
+            <button class="btn btn-primary" onclick="window.navigateToView('playground')">Go to Playground →</button>
+          </div>
+
+          <!-- Main Graph Container -->
+          <div class="graph-view-card" id="graph-main-content">
+            <div class="graph-toolbar">
+              <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+                <!-- Before / After Toggle Buttons -->
+                <div class="graph-toggle-group">
+                  <button class="graph-toggle-btn" id="btn-graph-before">Before Optimization</button>
+                  <button class="graph-toggle-btn active" id="btn-graph-after">⚡ After Optimization</button>
+                </div>
+                <span id="graph-workload-title" style="font-size: 13px; font-weight: 600; color: var(--text-secondary);">Vector Operations</span>
+              </div>
+
+              <div class="graph-zoom-controls">
+                <button class="btn btn-sm btn-outline" id="btn-graph-zoom-in" title="Zoom In">+</button>
+                <button class="btn btn-sm btn-outline" id="btn-graph-zoom-out" title="Zoom Out">−</button>
+                <button class="btn btn-sm btn-outline" id="btn-graph-fit" title="Reset View">Fit View</button>
+              </div>
+            </div>
+
+            <!-- SVG Graph Container -->
+            <div class="graph-canvas-container" id="graph-canvas-container">
+              <svg id="graph-svg-element" class="graph-svg"></svg>
+            </div>
+
+            <!-- Graph Stats -->
+            <div class="kpi-metrics-grid" id="graph-stats-container" style="margin-bottom: 0;">
+              <!-- Populated via graph_visualizer.js -->
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 5: MLIR EXPLORER
+             ==================================================================== -->
+        <section class="view-section" id="view-mlir">
+          
+          <!-- Active Program Status Banner -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge badge-purple">ACTIVE PROGRAM</span>
+              <strong id="mlir-active-title" style="color: var(--text-primary);">Vector Addition</strong>
+              <span class="badge badge-muted" id="mlir-active-lang">PYTHON</span>
+              <span class="badge badge-green" id="mlir-active-status">Analyzed ✓</span>
+            </div>
+            <button class="btn btn-sm btn-outline-blue" onclick="window.navigateToView('playground')">Switch / Edit Code in Playground</button>
+          </div>
+
+          <!-- Empty State (Shown if no analyzed program exists) -->
+          <div class="empty-state-box" id="mlir-empty-state" style="display: none;">
+            <div class="empty-state-icon">◇</div>
+            <h4 class="empty-state-title">No Analyzed Program</h4>
+            <p class="empty-state-text">Analyze code in the Playground to generate its MLIR intermediate representation and dialect lowering pipeline.</p>
+            <button class="btn btn-primary" onclick="window.navigateToView('playground')">Go to Playground →</button>
+          </div>
+
+          <!-- MLIR Main Content -->
+          <div id="mlir-main-content">
+            <div class="mlir-intro-card">
+              <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+                <div>
+                  <span class="badge badge-purple" style="margin-bottom: 6px;">COMPILER INTERMEDIATE REPRESENTATION</span>
+                  <h3 style="font-size: 20px; font-weight: 700; color: var(--text-primary);">MLIR Dialect Lowering Explorer</h3>
+                  <p style="font-size: 13.5px; color: var(--text-secondary); max-width: 700px; margin-top: 4px;">
+                    See how your active program is lowered through hierarchical compiler dialects (<code>linalg</code> ➔ <code>scf</code> ➔ <code>vector</code> ➔ <code>llvm</code>).
+                  </p>
+                </div>
+                
+                <!-- Original vs Optimized MLIR Toggle -->
+                <div class="graph-toggle-group">
+                  <button class="graph-toggle-btn active" id="btn-mlir-view-pipeline">5-Stage Pipeline</button>
+                  <button class="graph-toggle-btn" id="btn-mlir-view-original">Original MLIR</button>
+                  <button class="graph-toggle-btn" id="btn-mlir-view-optimized">⚡ Optimized MLIR</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5-Stage Stepper Bar -->
+            <div class="pipeline-stepper-bar" id="mlir-stepper-container">
+              <!-- Dynamically populated via mlir_visualizer.js -->
+            </div>
+
+            <!-- MLIR Code Viewer & Compiler Transformation Details -->
+            <div class="mlir-details-grid">
+              
+              <div class="code-viewer-panel">
+                <div class="code-viewer-header">
+                  <div>
+                    <span class="badge badge-purple" id="mlir-dialect-tag">linalg</span>
+                    <strong style="margin-left: 8px; font-size: 13px; color: var(--text-primary);" id="mlir-stage-heading">Structured Operation</strong>
+                  </div>
+                  <button class="btn btn-sm btn-outline" id="btn-copy-mlir-code">Copy Code</button>
+                </div>
+                <pre class="mlir-code-block" id="mlir-code-display">// Loading MLIR Intermediate Representation...</pre>
+              </div>
+
+              <div class="mlir-explanation-panel">
+                <div class="card">
+                  <div class="card-header">
+                    <h4 class="card-title">Compiler Transformation Details</h4>
+                  </div>
+                  <p id="mlir-stage-description" style="font-size: 13px; color: var(--text-secondary); line-height: 1.5; margin-bottom: 14px;">
+                    Description of lowering pass.
+                  </p>
+
+                  <h5 style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-bottom: 6px;">Lowering Pass Command:</h5>
+                  <div class="pass-command-box" id="mlir-pass-command">mlir-opt --convert-linalg-to-loops</div>
+
+                  <h5 style="font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; margin-top: 14px; margin-bottom: 6px;">Key Compiler Concepts:</h5>
+                  <ul id="mlir-concepts-list" style="margin-left: 18px; font-size: 12.5px; color: var(--text-secondary); line-height: 1.6;">
+                    <!-- Populated via JS -->
+                  </ul>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 6: MAX GRAPH PLAYGROUND
+             ==================================================================== -->
+        <section class="view-section" id="view-max-graph">
+          
+          <!-- Active Program Status Banner -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge badge-cyan">ACTIVE PROGRAM</span>
+              <strong id="max-active-title" style="color: var(--text-primary);">Vector Addition</strong>
+              <span class="badge badge-muted" id="max-active-lang">PYTHON</span>
+              <span class="badge badge-green" id="max-active-status">Analyzed ✓</span>
+            </div>
+            <button class="btn btn-sm btn-outline-blue" onclick="window.navigateToView('playground')">Switch / Edit Code in Playground</button>
+          </div>
+
+          <!-- Empty State (Shown if no analyzed program exists) -->
+          <div class="empty-state-box" id="max-empty-state" style="display: none;">
+            <div class="empty-state-icon">◈</div>
+            <h4 class="empty-state-title">No Analyzed Program</h4>
+            <p class="empty-state-text">Analyze code in the Playground to generate its MAX symbolic computation graph and operator fusion evaluation.</p>
+            <button class="btn btn-primary" onclick="window.navigateToView('playground')">Go to Playground →</button>
+          </div>
+
+          <!-- MAX Main Content -->
+          <div id="max-main-content">
+            <div class="hero-banner" style="padding: 24px;">
+              <span class="badge badge-cyan" style="margin-bottom: 6px;">MODULAR ACCELERATED EXECUTION (MAX)</span>
+              <h3 style="font-size: 22px; font-weight: 800; color: var(--text-primary);">MAX Graph Architecture & Operator Fusion</h3>
+              <p style="font-size: 13.5px; color: var(--text-secondary); max-width: 750px; margin-top: 4px;">
+                Explore how MAX eliminates DRAM bandwidth bottlenecks by fusing multi-layer computations into a single hardware kernel with register-level data reuse.
+              </p>
+            </div>
+
+            <!-- Unfused vs Fused Interactive Visual Flow -->
+            <div class="max-fusion-flow-grid" id="max-flow-grid-container">
+              
+              <!-- Unfused Standard Runtime -->
+              <div class="fusion-flow-card" id="max-unfused-card">
+                <div class="card-header">
+                  <div>
+                    <span class="badge badge-amber">Standard AI Runtime</span>
+                    <h4 class="card-title" style="margin-top: 4px;" id="max-unfused-title">Unfused Execution (Multiple Kernels)</h4>
+                  </div>
+                </div>
+
+                <div id="max-unfused-flow-container">
+                  <div class="flow-node-item">Input Tensor (X) + Weights (W)</div>
+                  <div class="flow-arrow-text">↓ Launch 1: MatMul (Writes DRAM Z1)</div>
+                  <div class="flow-node-item" style="border-color: var(--accent-amber-border);">Intermediate Memory Z1 (DRAM Write)</div>
+                  <div class="flow-arrow-text">↓ Launch 2: BiasAdd (Reads Z1, Writes Z2)</div>
+                  <div class="flow-node-item" style="border-color: var(--accent-amber-border);">Intermediate Memory Z2 (DRAM Write)</div>
+                  <div class="flow-arrow-text">↓ Launch 3: ReLU (Reads Z2, Writes Out)</div>
+                  <div class="flow-node-item" style="border-color: var(--accent-cyan-border);">Final Output Tensor (Y)</div>
+                </div>
+
+                <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-secondary);" id="max-unfused-meta">
+                  <div>Kernel Launches: <strong style="color: var(--text-primary);">3 Launches</strong></div>
+                  <div>DRAM Memory Passes: <strong style="color: var(--accent-amber);">6 Passes (Memory-bound)</strong></div>
+                </div>
+              </div>
+
+              <div class="fusion-arrow-divider">➔</div>
+
+              <!-- MAX Fused Graph -->
+              <div class="fusion-flow-card" style="border-color: var(--accent-green-border);" id="max-fused-card">
+                <div class="card-header">
+                  <div>
+                    <span class="badge badge-green">MAX Engine Optimization</span>
+                    <h4 class="card-title" style="margin-top: 4px;" id="max-fused-title">Fused Graph (1 Kernel)</h4>
+                  </div>
+                  <button class="btn btn-sm btn-success" id="btn-apply-fusion-action">Optimization Applied ✓</button>
+                </div>
+
+                <div id="max-fused-flow-container">
+                  <div class="flow-node-item">Input Tensor (X) + Weights (W, b)</div>
+                  <div class="flow-arrow-text" style="color: var(--accent-green);">↓ Single Fused MAX Kernel Launch</div>
+                  <div class="flow-node-item fused-highlight">
+                    <div style="font-size: 11px; opacity: 0.8;">CPU Register Lifetime</div>
+                    <div>GEMM Accumulate ➔ Bias Add ➔ Inline ReLU</div>
+                  </div>
+                  <div class="flow-arrow-text" style="color: var(--accent-green);">↓ Single Direct DRAM Write</div>
+                  <div class="flow-node-item" style="border-color: var(--accent-green-border); color: var(--accent-green);">Final Output Tensor (Y)</div>
+                </div>
+
+                <div style="margin-top: 14px; padding-top: 10px; border-top: 1px solid var(--border-subtle); font-size: 12px; color: var(--text-secondary);" id="max-fused-meta">
+                  <div>Kernel Launches: <strong style="color: var(--accent-green);">1 Single Kernel</strong></div>
+                  <div>DRAM Memory Passes: <strong style="color: var(--accent-green);">2 Passes (&gt;50% DRAM Savings)</strong></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Live Memory Traffic Evaluation -->
+            <div class="card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <h3 class="card-title">Live MAX Memory Traffic Benchmark</h3>
+                  <span class="card-subtitle" id="max-benchmark-subtitle">Evaluates theoretical and measured DRAM traffic and kernel fusion for active program</span>
+                </div>
+                <button class="btn btn-primary" id="btn-run-max-benchmark">Evaluate Memory Traffic Savings</button>
+              </div>
+              <div id="max-eval-results-container" style="display: none; margin-top: 12px;">
+                <!-- Populated dynamically via JS -->
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 7: BENCHMARK & PERFORMANCE COMPARISON
+             ==================================================================== -->
+        <section class="view-section" id="view-benchmark">
+          
+          <!-- Active Program Status Banner -->
+          <div style="display: flex; align-items: center; justify-content: space-between; padding: 10px 16px; background: var(--bg-card); border: 1px solid var(--border-default); border-radius: var(--radius-md); margin-bottom: 16px;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <span class="badge badge-cyan">ACTIVE PROGRAM</span>
+              <strong id="benchmark-active-title" style="color: var(--text-primary);">Vector Addition</strong>
+              <span class="badge badge-muted" id="benchmark-active-lang">PYTHON</span>
+              <span class="badge badge-green" id="benchmark-active-status">Analyzed ✓</span>
+            </div>
+            <button class="btn btn-sm btn-outline-blue" onclick="window.navigateToView('playground')">Switch / Edit Code in Playground</button>
+          </div>
+
+          <!-- Empty State (Shown if no analyzed program exists) -->
+          <div class="empty-state-box" id="benchmark-empty-state" style="display: none;">
+            <div class="empty-state-icon">📊</div>
+            <h4 class="empty-state-title">No Analyzed Program</h4>
+            <p class="empty-state-text">Select an example or write custom code in the Playground and click "Analyze Code" before running a verified performance comparison.</p>
+            <button class="btn btn-primary" onclick="window.navigateToView('playground')">Go to Playground →</button>
+          </div>
+
+          <!-- Main Benchmark Content Container -->
+          <div id="benchmark-main-content">
+            <div class="card" style="margin-bottom: 20px;">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <h3 class="card-title">Live Hardware Performance Benchmarking</h3>
+                  <span class="card-subtitle">Executes baseline vs. transformed kernels across warm-up and timed iterations</span>
+                </div>
+                <button class="btn btn-primary btn-lg" id="btn-run-active-benchmark">
+                  <span>▶ Run Live Benchmark for Active Program</span>
+                </button>
+              </div>
+
+              <!-- Correctness & Performance Summary Banner -->
+              <div style="display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; background: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-subtle); flex-wrap: wrap; gap: 10px;">
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 600; color: var(--text-primary);">Correctness Verification:</span>
+                  <span class="badge badge-green" id="bench-correctness-badge">✓ Outputs Match</span>
+                </div>
+                <div style="display: flex; align-items: center; gap: 8px;">
+                  <span style="font-weight: 600; color: var(--text-primary);">Performance Result:</span>
+                  <span class="badge badge-green" id="bench-result-badge">✓ Faster after transformation</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4 KPI Summary Cards -->
+            <div class="kpi-metrics-grid">
+              <div class="kpi-box">
+                <span class="kpi-title">Baseline Execution Time</span>
+                <span class="kpi-number text-muted" id="bench-kpi-py-time">-- ms</span>
+                <span class="kpi-sub">Original User Script</span>
+              </div>
+              <div class="kpi-box" style="border-color: var(--accent-green-border);">
+                <span class="kpi-title">Transformed Execution Time</span>
+                <span class="kpi-number text-cyan" id="bench-kpi-simd-time">-- ms</span>
+                <span class="kpi-sub">Optimized SIMD / Tiled Kernel</span>
+              </div>
+              <div class="kpi-box" style="border-color: var(--accent-green-border);">
+                <span class="kpi-title">Measured Speedup</span>
+                <span class="kpi-number text-emerald" style="color: var(--accent-green);" id="bench-kpi-par-speedup">--x</span>
+                <span class="kpi-sub" style="color: var(--accent-green);">Throughput Factor</span>
+              </div>
+              <div class="kpi-box">
+                <span class="kpi-title">Performance Change</span>
+                <span class="kpi-number text-amber" style="color: var(--accent-amber);" id="bench-kpi-reduction">-- %</span>
+                <span class="kpi-sub">Latency Delta</span>
+              </div>
+            </div>
+
+            <!-- Latency Comparison Bar Chart -->
+            <div class="chart-card">
+              <div class="card-header">
+                <div class="card-title-wrap">
+                  <h4 class="card-title">Execution Latency (Lower is Faster)</h4>
+                  <span class="card-subtitle">Real execution times measured in the sandboxed runtime environment</span>
+                </div>
+              </div>
+              <div class="chart-bars-list" id="bench-chart-bars-container">
+                <!-- Dynamically populated via benchmark.js -->
+              </div>
+            </div>
+
+            <!-- Detailed Results Table -->
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Implementation Breakdown & Numerical Verification</h4>
+              </div>
+              <div class="history-table-wrap">
+                <table class="history-table" id="bench-results-table">
+                  <thead>
+                    <tr>
+                      <th>Implementation Track</th>
+                      <th>Execution Time</th>
+                      <th>Speedup Factor</th>
+                      <th>Correctness</th>
+                      <th>Compiler & Hardware Optimization Applied</th>
+                    </tr>
+                  </thead>
+                  <tbody id="bench-table-body">
+                    <tr>
+                      <td colspan="5" style="text-align: center; color: var(--text-muted);">Click "Run Live Benchmark for Active Program" to evaluate</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <div class="honest-notice-banner">
+                <span class="honest-icon">ℹ️</span>
+                <span><strong>Hardware & Measurement Integrity:</strong> All execution timings are calculated from real subprocess runs over warm-up and timed iterations. Numerical outputs are verified for equivalence.</span>
+              </div>
+            </div>
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 8: CONCEPTS KNOWLEDGE BASE
+             ==================================================================== -->
+        <section class="view-section" id="view-concepts">
+          
+          <div class="hero-banner" style="padding: 24px; margin-bottom: 20px;">
+            <span class="badge badge-purple" style="margin-bottom: 6px;">PEDAGOGICAL KNOWLEDGE HUB</span>
+            <h3 style="font-size: 22px; font-weight: 800; color: var(--text-primary);">AI Compiler & Kernel Engineering Concepts</h3>
+            <p style="font-size: 13.5px; color: var(--text-secondary); max-width: 750px; margin-top: 4px;">
+              Essential concepts, compiler optimizations, hardware architectures, and interview defense topics for students and engineers.
+            </p>
+          </div>
+
+          <div class="concepts-grid">
+            
+            <div class="concept-card">
+              <div class="concept-card-icon">⚡</div>
+              <h4 class="concept-card-title">1. What is an AI Compiler?</h4>
+              <p class="concept-card-body">
+                An AI compiler translates high-level neural network graphs (PyTorch, ONNX) into hardware-optimized machine code. Unlike general compilers (GCC), AI compilers perform domain-specific graph transformations such as <strong>operator fusion</strong>, <strong>memory layout scheduling</strong>, and <strong>loop tiling</strong>.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">💻</div>
+              <h4 class="concept-card-title">2. What is a Compute Kernel?</h4>
+              <p class="concept-card-body">
+                A compute kernel is a specialized, compact function designed to perform compute-intensive mathematical operations (e.g. GEMM, convolutions, activations) across multi-core processors or SIMD registers with maximum cache efficiency.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">🐍</div>
+              <h4 class="concept-card-title">3. Why is Pure Python Slow for AI?</h4>
+              <p class="concept-card-body">
+                In Python, every number is a heap-allocated <code>PyObject</code> requiring dynamic type-checking, reference counting, and bytecode interpretation under the Global Interpreter Lock (GIL). A single scalar loop requires dozens of CPU cycles per element instead of 1 hardware cycle.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">🚀</div>
+              <h4 class="concept-card-title">4. What is Mojo?</h4>
+              <p class="concept-card-body">
+                Mojo is a high-performance systems language that combines Python's ergonomics with C/C++ performance. It introduces explicit hardware SIMD types (<code>SIMD[DType, 8]</code>), zero-cost raw memory pointers (<code>UnsafePointer</code>), and work-stealing multi-core dispatch (<code>parallelize</code>).
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">◇</div>
+              <h4 class="concept-card-title">5. What is MLIR?</h4>
+              <p class="concept-card-body">
+                MLIR (Multi-Level Intermediate Representation) is a modular compiler infrastructure created by Chris Lattner. It uses hierarchical dialects (<code>linalg</code> ➔ <code>scf</code> ➔ <code>vector</code> ➔ <code>llvm</code>) to lower tensor operations step-by-step rather than jumping straight to assembly.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">◈</div>
+              <h4 class="concept-card-title">6. What is the MAX Engine?</h4>
+              <p class="concept-card-body">
+                MAX (Modular Accelerated eXecution) is a next-generation AI runtime engine designed for low-latency inference. It builds symbolic graphs, optimizes memory access patterns, and compiles fused kernels with zero unnecessary DRAM round-trips.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">🏎️</div>
+              <h4 class="concept-card-title">7. What is SIMD Vectorization?</h4>
+              <p class="concept-card-body">
+                SIMD (Single Instruction, Multiple Data) executes one instruction simultaneously across multiple data lanes in hardware registers (e.g. 8 32-bit floats in a 256-bit AVX2 register), achieving immediate 8x throughput speedups.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">🧱</div>
+              <h4 class="concept-card-title">8. What is Cache Tiling?</h4>
+              <p class="concept-card-body">
+                Cache tiling divides large multidimensional matrices into small blocks (e.g. 64x64) that fit inside fast CPU L1/L2 caches (32 KB - 512 KB), preventing memory bus stalls caused by reading from slow main DRAM.
+              </p>
+            </div>
+
+            <div class="concept-card">
+              <div class="concept-card-icon">🧬</div>
+              <h4 class="concept-card-title">9. What is Operator Fusion?</h4>
+              <p class="concept-card-body">
+                Operator fusion combines multiple sequential computation steps (e.g. Matrix Multiply ➔ Bias Add ➔ ReLU) into a single kernel pass, keeping intermediate values in CPU registers and reducing DRAM memory traffic by 50% or more.
+              </p>
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ====================================================================
+             VIEW 9: SESSION HISTORY
+             ==================================================================== -->
+        <section class="view-section" id="view-history">
+          
+          <div class="card">
+            <div class="card-header">
+              <div class="card-title-wrap">
+                <h3 class="card-title">Session Run History & Data Export</h3>
+                <span class="card-subtitle">Review all custom code and benchmark runs in the current session</span>
+              </div>
+              <div style="display: flex; gap: 8px;">
+                <button class="btn btn-outline" id="btn-history-export-csv">📥 Export CSV</button>
+                <button class="btn btn-outline" id="btn-history-export-json">📥 Export JSON</button>
+                <button class="btn btn-outline" style="color: var(--accent-rose); border-color: var(--accent-rose-border);" id="btn-history-clear">🗑️ Clear</button>
+              </div>
+            </div>
+
+            <div class="history-table-wrap">
+              <table class="history-table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Timestamp</th>
+                    <th>Workload / Script</th>
+                    <th>Language Track</th>
+                    <th>Parameters</th>
+                    <th>Execution Time</th>
+                    <th>Speedup</th>
+                    <th>Correctness</th>
+                    <th>Optimization Notes</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="session-history-table-body">
+                  <tr>
+                    <td colspan="10" style="text-align: center; color: var(--text-muted); padding: 24px;">No session runs recorded yet. Execute code in the Playground or run a benchmark to log results!</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </section>
+
+      </main>
+
+    </div>
+
+  </div>
+
+  <!-- ==========================================================================
+       INTERACTIVE MODALS & TOOLTIPS
+       ========================================================================== -->
+  
+  <!-- "Need Help?" Onboarding Guide Modal -->
+  <div class="modal-backdrop" id="modal-help">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title">💡 How to Use the AI Compiler Playground</h3>
+        <button class="btn-close-modal" id="btn-close-help-modal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <p>Follow this simple 7-step journey to understand how AI compilers optimize execution:</p>
+        
+        <div class="modal-step-list">
+          <div class="modal-step-item">
+            <span class="modal-step-badge">1</span>
+            <div><strong>Select an Example:</strong> Choose Vector Addition, Matrix Multiplication, Reduction, or custom code.</div>
+          </div>
+          <div class="modal-step-item">
+            <span class="modal-step-badge">2</span>
+            <div><strong>Read the Code:</strong> Inspect the naive baseline scalar loop in the code editor.</div>
+          </div>
+          <div class="modal-step-item">
+            <span class="modal-step-badge">3</span>
+            <div><strong>Click Analyze:</strong> Let the analyzer identify loop bounds, memory access, and SIMD opportunities.</div>
+          </div>
+          <div class="modal-step-item">
+            <span class="modal-step-badge">4</span>
+            <div><strong>Review Suggestions:</strong> Expand the "What does this mean?" guides to learn why it's faster.</div>
+          </div>
+          <div class="modal-step-item">
+            <span class="modal-step-badge">5</span>
+            <div><strong>View the Graph:</strong> Toggle between Before and After to see kernel fusion and register reuse for YOUR code.</div>
+          </div>
+          <div class="modal-step-item">
+            <span class="modal-step-badge">6</span>
+            <div><strong>Explore MLIR:</strong> Step through the 5 lowering stages (linalg ➔ scf ➔ vector ➔ llvm) generated for YOUR code.</div>
+          </div>
+          <div class="modal-step-item">
+            <span class="modal-step-badge">7</span>
+            <div><strong>Run Benchmarks:</strong> Measure real execution latency gains and hardware speedups for YOUR code.</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" id="btn-close-help-action">Got it, Let's Start!</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Optimization Details Modal -->
+  <div class="modal-backdrop" id="modal-view-example">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 class="modal-title" id="modal-opp-title">Optimization Technique</h3>
+        <button class="btn-close-modal" id="btn-close-opt-modal" aria-label="Close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div style="margin-bottom: 12px;">
+          <strong style="color: var(--accent-blue);">Why is this optimization effective?</strong>
+          <p id="modal-opp-why" style="margin-top: 4px; font-size: 13px; color: var(--text-secondary);"></p>
+        </div>
+        <div style="margin-bottom: 12px;">
+          <strong style="color: var(--accent-cyan);">How does the compiler implement it?</strong>
+          <p id="modal-opp-how" style="margin-top: 4px; font-size: 13px; color: var(--text-secondary);"></p>
+        </div>
+        <div style="margin-bottom: 14px;">
+          <strong style="color: var(--accent-green);">Expected Hardware Impact:</strong>
+          <p id="modal-opp-impact" style="margin-top: 4px; font-size: 13px; color: var(--text-secondary);"></p>
+        </div>
+
+        <div class="diff-viewer-grid">
+          <div class="diff-col">
+            <div class="diff-col-header">Before (Scalar)</div>
+            <pre class="diff-code-pre" id="modal-code-before"></pre>
+          </div>
+          <div class="diff-col">
+            <div class="diff-col-header">After (Optimized)</div>
+            <pre class="diff-code-pre" id="modal-code-after"></pre>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="btn-close-opt-footer">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Graph Node Tooltip Box -->
+  <div class="graph-tooltip" id="graph-tooltip-box"></div>
+
+  <!-- JavaScript Modules -->
+  <script src="js/graph_visualizer.js"></script>
+  <script src="js/mlir_visualizer.js"></script>
+  <script src="js/benchmark.js"></script>
+  <script src="js/code_runner.js"></script>
+  <script src="js/history.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
